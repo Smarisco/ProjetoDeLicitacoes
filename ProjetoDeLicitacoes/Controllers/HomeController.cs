@@ -31,7 +31,12 @@ namespace ProjetoDeLicitacoes.Controllers
         {
             // Obtém todas as licitações do banco de dados.
             var licitacoes = _licitacoesDbContext.Licitacao.ToList();
-
+            // Verifica se o campo é nulo.
+            if (licitacoes == null)
+            {
+                // Retorna um erro.
+                return NotFound();
+            }
             // Retorna a lista de licitações para a view.
             return View(licitacoes);
             
