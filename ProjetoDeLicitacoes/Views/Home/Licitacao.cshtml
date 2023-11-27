@@ -1,0 +1,32 @@
+﻿@model List<Licitacao> 
+
+<h2>Lista de Licitações</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Descrição</th>
+            <th>Data de Abertura</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var licitacao in Model)
+        {
+            <tr>
+                <td>@licitacao.Numero</td>
+                <td>@licitacao.Descricao</td>
+                <td>@licitacao.DataAbertura.ToShortDateString()</td>
+                <td>@licitacao.Status</td>
+                <td>
+                    <a href="@Url.Action("Editar", new { id = licitacao.Id })">Editar</a> |
+                    <a href="@Url.Action("Excluir", new { id = licitacao.Id })">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Form")" class="btn btn-primary">Cadastrar Nova Licitação</a>
