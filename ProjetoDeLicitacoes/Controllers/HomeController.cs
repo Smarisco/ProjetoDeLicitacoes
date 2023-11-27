@@ -78,7 +78,7 @@ namespace ProjetoDeLicitacoes.Controllers
                 return NotFound();
             }
 
-            return View("Form", licitacao);
+            return View("Cadastrar", licitacao);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
