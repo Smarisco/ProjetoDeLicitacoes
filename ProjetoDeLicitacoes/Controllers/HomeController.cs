@@ -6,6 +6,7 @@ using ProjetoDeLicitacoes.Models;
 using System;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace ProjetoDeLicitacoes.Controllers
 {
     public class HomeController : Controller
@@ -43,22 +44,31 @@ namespace ProjetoDeLicitacoes.Controllers
         }
         public IActionResult Salvar(Licitacao licitacao)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (licitacao.Id == 0)
+                if (ModelState.IsValid)
                 {
-                    _licitacoesDbContext.Licitacao.Add(licitacao);
-                }
-                else
-                {
-                    _licitacoesDbContext.Licitacao.Update(licitacao);
+                    if (licitacao.Id == 0)
+                    {
+                        _licitacoesDbContext.Licitacao.Add(licitacao);
+                    }
+                    else
+                    {
+                        _licitacoesDbContext.Licitacao.Update(licitacao);
+                    }
+
+                    _licitacoesDbContext.SaveChanges();
+                    return RedirectToAction(nameof(Index));
                 }
 
-                _licitacoesDbContext.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                return View("Cadastrar", licitacao);
             }
 
-            return View("Cadastrar", licitacao);
+            catch (Exception e)
+            {
+                new NLogLogger().Fatal(e);
+                this.EmitirMensagem(e.Message, ETipoMensagem.Erro);
+            }
         }
         public IActionResult Excluir(int id)
         {
