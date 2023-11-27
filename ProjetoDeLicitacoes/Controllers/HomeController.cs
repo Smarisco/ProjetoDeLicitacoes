@@ -5,18 +5,21 @@ using ProjetoDeLicitacoes.Data;
 using ProjetoDeLicitacoes.Models;
 using System;
 using Microsoft.EntityFrameworkCore;
-
+using ProjetoDeLicitacoes.Models.Business;
 
 namespace ProjetoDeLicitacoes.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly LicitacaoDbContext _licitacoesDbContext;
+        private readonly LicitacaoBusiness _licitacaoBusiness;
+        private readonly LicitacaoDbContext _licitacaoDbContext;
 
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+            _licitacaoBusiness = new LicitacaoBusiness();
+            _licitacaoDbContext = new LicitacaoDbContext();
         }
 
         public IActionResult Index()
@@ -26,74 +29,89 @@ namespace ProjetoDeLicitacoes.Controllers
 
         public IActionResult Cadastrar()
         {
-            return View();
+            try
+            {
+                return View();
+
+            }
+            catch (Exception ex)
+            {
+                // Exibe uma mensagem de erro para o usuário
+                ModelState.AddModelError("", "Não foi possível cadastrar a licitação.");
+                return View("Cadastrar");
+            }
         }
         public IActionResult Licitacao()
         {
-            // Obtém todas as licitações do banco de dados.
-            var licitacoes = _licitacoesDbContext.Licitacao.ToList();
+            var licitacoes = _licitacaoDbContext.Licitacao.ToList();
             // Verifica se o campo é nulo.
-            if (licitacoes == null)
+            if (licitacoes== null)
             {
                 // Retorna um erro.
-                return NotFound();
+                return NotFound("Não há licitações disponíveis.");
             }
             // Retorna a lista de licitações para a view.
             return View(licitacoes);
-            
+
         }
         public IActionResult Salvar(Licitacao licitacao)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    if (licitacao.Id == 0)
-                    {
-                        _licitacoesDbContext.Licitacao.Add(licitacao);
-                    }
-                    else
-                    {
-                        _licitacoesDbContext.Licitacao.Update(licitacao);
-                    }
-
-                    _licitacoesDbContext.SaveChanges();
-                    return RedirectToAction(nameof(Index));
-                }
+                _licitacaoBusiness.CriarLicitacao(licitacao);
 
                 return View("Cadastrar", licitacao);
             }
 
-            catch (Exception e)
+            catch (Exception ex)
             {
-                new NLogLogger().Fatal(e);
-                this.EmitirMensagem(e.Message, ETipoMensagem.Erro);
+                // Exibe uma mensagem de erro para o usuário
+                ModelState.AddModelError("", "Não foi possível salvar a licitação.");
+                return View("Cadastrar", licitacao);
             }
         }
         public IActionResult Excluir(int id)
         {
-            var licitacao = _licitacoesDbContext.Licitacao.Find(id);
-
-            if (licitacao == null)
+            try
             {
-                return NotFound();
+                var licitacao = _licitacaoDbContext.Licitacao.Find(id);
+
+                if (licitacao == null)
+                {
+                    return NotFound();
+                }
+
+                _licitacaoDbContext.Licitacao.Remove(licitacao);
+                _licitacaoDbContext.SaveChanges();
+
+                return RedirectToAction(nameof(Index));
             }
-
-            _licitacoesDbContext.Licitacao.Remove(licitacao);
-            _licitacoesDbContext.SaveChanges();
-
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                // Handle the exception here and return an appropriate response
+                ModelState.AddModelError("", "Não foi possível excluir a licitação.");
+                return View("Index");
+            }
         }
         public IActionResult Editar(int id)
         {
-            var licitacao = _licitacoesDbContext.Licitacao.Find(id);
-
-            if (licitacao == null)
+            try
             {
-                return NotFound();
-            }
+                var licitacao = _licitacaoDbContext.Licitacao.Find(id);
 
-            return View("Cadastrar", licitacao);
+                if (licitacao == null)
+                {
+                    return NotFound();
+                }
+
+                return View("Cadastrar", licitacao);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here and return an appropriate response
+                ModelState.AddModelError("", "Não foi possível editar a licitação.");
+                return View("Cadastrar");
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
