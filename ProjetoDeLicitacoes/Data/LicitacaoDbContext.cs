@@ -9,6 +9,10 @@ namespace ProjetoDeLicitacoes.Data
             : base(options)
         {
         }
+        public LicitacaoDbContext()
+        {
+                
+        }
 
         public DbSet<Licitacao> Licitacao { get; set; }
     
