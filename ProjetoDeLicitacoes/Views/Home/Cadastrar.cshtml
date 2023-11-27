@@ -25,6 +25,8 @@
     </div>
     </br>
     <button type="submit" class="btn btn-primary">Salvar</button>
+    <!-- O botão Editar pode redirecionar para uma ação de edição específica -->
+    <a href="@Url.Action("Editar")@*, new { id = Model.Id })"*@ class="btn btn-warning">Editar</a>
     <a href="@Url.Action("Index")" class="btn btn-secondary">Voltar para a Lista</a>
 </form>
 

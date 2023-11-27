@@ -4,6 +4,7 @@ using System.Diagnostics;
 using ProjetoDeLicitacoes.Data;
 using ProjetoDeLicitacoes.Models;
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjetoDeLicitacoes.Controllers
 {
@@ -34,6 +35,50 @@ namespace ProjetoDeLicitacoes.Controllers
             // Retorna a lista de licitações para a view.
             return View(licitacoes);
             
+        }
+        public IActionResult Salvar(Licitacao licitacao)
+        {
+            if (ModelState.IsValid)
+            {
+                if (licitacao.Id == 0)
+                {
+                    _licitacoesDbContext.Licitacao.Add(licitacao);
+                }
+                else
+                {
+                    _licitacoesDbContext.Licitacao.Update(licitacao);
+                }
+
+                _licitacoesDbContext.SaveChanges();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View("Cadastrar", licitacao);
+        }
+        public IActionResult Excluir(int id)
+        {
+            var licitacao = _licitacoesDbContext.Licitacao.Find(id);
+
+            if (licitacao == null)
+            {
+                return NotFound();
+            }
+
+            _licitacoesDbContext.Licitacao.Remove(licitacao);
+            _licitacoesDbContext.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
+        public IActionResult Editar(int id)
+        {
+            var licitacao = _licitacoesDbContext.Licitacao.Find(id);
+
+            if (licitacao == null)
+            {
+                return NotFound();
+            }
+
+            return View("Form", licitacao);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
