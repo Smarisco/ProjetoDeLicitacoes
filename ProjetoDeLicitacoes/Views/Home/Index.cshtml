@@ -1,8 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model Licitacao
 
 <div class="text-center">
-    <h1 class="display-4">Licitações</h1>
-    
+    <h1 class="display-4">Gestão de Licitações</h1>
+    <div class="container">
+        <div>
+        <section class="acoes">
+            <h2>Escolha sua opção</h2>
+            <a href="@Url.Action("Licitação")" class="btn btn-success" >Listar Todas as Licitações</a>
+            <a href="@Url.Action("Cadastrar")" class="btn btn-info">Cadastrar Nova Licitação</a> 
+            <a href="@Url.Action("Editar")" class="btn btn-info">Editar Cadastro de Licitações</a>
+            </section>
+        </div>
+    </div>
 </div>
