@@ -24,6 +24,7 @@ namespace ProjetoDeLicitacoes.Controllers
 
         public IActionResult Index()
         {
+            
             return View();
         }
 
